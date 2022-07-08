@@ -101,11 +101,48 @@ exports.getAllSauces = (res) => {
 //"Likes" and "Dislikes" (+1, 0, -1)
 
 //Adds a like
-exports.likeSauce = (req, res) => {
+
+exports.likeSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
-    .then((sauce) => {
-      if (!sauce) {
-        return res.status(404).json({ message: "Sauce non trouvée !" });
-      }})
-    .catch((error) => res.status(500).json({ error }));
-};
+      .then(sauce => {
+          const l = req.body.like
+          const user = req.body.userId
+          switch (l) {
+              case 1:
+                  if (!sauce.usersLiked.find(us => us == user)) {
+                      sauce.likes++
+                      sauce.usersLiked.push(user)
+                  }
+                  break
+              case -1:
+                  if (!sauce.usersDisliked.find(us => us == user)) {
+                      sauce.dislikes++
+                      sauce.usersDisliked.push(user)
+                  }
+                  break
+              case 0:
+                  let index = sauce.usersLiked.findIndex(us => us == user)
+                  if (index != -1) {
+                      console.log(index)
+                      sauce.usersLiked.splice(index, 1)
+                      sauce.likes--
+                  }
+                  else {
+                      index = sauce.usersDisliked.findIndex(us => us == user)
+                      console.log(index)
+                      sauce.usersDisliked.splice(index, 1)
+                      sauce.dislikes--
+                  }
+                  break
+              default:
+                  console.log("probleme")
+          }
+          sauce.save()
+              .then(() => res.status(200).json({ message: "ok" }))
+              .catch(error => res.status(400).json({ error }))
+      })
+      .catch(error => {
+          console.log(error)
+          res.status(404).json({ error })
+      })
+}
