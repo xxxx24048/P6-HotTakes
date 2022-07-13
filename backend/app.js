@@ -1,10 +1,9 @@
 const express = require('express');
-
 const app = express();
 const mongoose = require('mongoose');
 const path = require('path'); 
-const userRoutes  = require('./routes/user'); // Import des routes user
-const sauceRoutes = require('./routes/sauces'); // Import des routes sauces
+const userRoutes  = require('./routes/user'); 
+const sauceRoutes = require('./routes/sauce'); 
 
 mongoose.connect('mongodb+srv://new_user:Eqpe0Lk7YzL0HI0I@cluster0.gnrcq.mongodb.net/?retryWrites=true&w=majority',
   { useNewUrlParser: true,
@@ -12,27 +11,7 @@ mongoose.connect('mongodb+srv://new_user:Eqpe0Lk7YzL0HI0I@cluster0.gnrcq.mongodb
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-
-app.use((req, res, next) => {
-    console.log('Requête reçue !');
-    next();
-  });
-  
-  app.use((req, res, next) => {
-    res.status(201);
-    next();
-  });
-  
-  app.use((req, res, next) => {
-    res.json({ message: 'Votre requête a bien été reçue !' });
-    next();
-  });
-  
-  app.use((req, res, next) => {
-    console.log('Réponse envoyée avec succès !');
-  });
-
-  //Allows everybody to use this route
+//Allows everybody to use this route
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -45,6 +24,9 @@ app.use((req, res, next) => {
   );
   next();
 });
+
+
+app.use(express.json());
 
 //Adding images path
 app.use("./images", express.static(path.join(__dirname, "images")));

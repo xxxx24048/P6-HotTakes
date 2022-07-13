@@ -15,7 +15,7 @@ exports.getOneSauce = (req, res) => {
 };
 
 //Creates a new sauce and uploads the image
-exports.createSauce = (req, res) => {
+exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
     delete sauceObject._id;
     const sauce = new Sauce({
@@ -90,12 +90,9 @@ exports.updateOneSauce = (req, res) => {
 };
 
 //Gets all sauces
-exports.getAllSauces = (res) => {
-  Sauce.find() 
-    .then((sauces) => {
-      return res.status(200).json(sauces);
-    })
-    .catch((error) => res.status(500).json({ error }));
+exports.getAllSauces = (req, res, next) => {
+    Sauce.find().then(sauces => res.status(200).json(sauces)) // Récupère toutes les sauces
+        .catch(error => res.status(400).json({ error }));
 };
 
 //"Likes" and "Dislikes" (+1, 0, -1)
