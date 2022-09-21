@@ -19,4 +19,4 @@ const storage = multer.diskStorage({
 });
 
 //Exports the storage object and declaring the file type accepted
-module.exports = multer({ storage }).single("image");
+module.exports = multer({ storage: storage }).single("image");
